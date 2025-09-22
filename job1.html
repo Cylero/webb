@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SZ - Astronomy 数智光电</title>
+    <style>
+        :root {
+            --primary-color: #e63946;
+            --text-color: #f8fafc;
+            --hover-color: #f8961e;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background: url('jupiter.jpg') center/cover no-repeat;
+            background-color: rgba(0, 0, 0, 0.5);
+            background-blend-mode: overlay;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        .nav-link {
+            padding: 0.5rem 1rem;
+            background-color: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            background-color: var(--hover-color);
+            color: #000;
+        }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .contact-info a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .contact-info a:hover {
+            color: var(--hover-color);
+        }
+        .main-content {
+            display: flex;
+            padding: 1rem;
+            gap: 1rem;
+        }
+        .image-slider {
+            flex: 2;
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        .slider-images {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+        .slider-image {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .slider-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .slider-controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem;
+        }
+        .slider-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: var(--text-color);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .slider-btn:hover {
+            background-color: var(--hover-color);
+        }
+        .product-categories {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        .category-item {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .category-item:hover {
+            background-color: var(--hover-color);
+        }
+        .software-download {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        .os-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .os-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .os-tab:hover {
+            background-color: var(--hover-color);
+        }
+        .os-tab.active {
+            background-color: var(--primary-color);
+        }
+        .download-links {
+            display: none;
+        }
+        .download-links.active {
+            display: block;
+        }
+        .download-link {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .download-link:hover {
+            background-color: var(--hover-color);
+        }
+        .new-product {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .new-product img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .buy-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .buy-btn:hover {
+            background-color: var(--hover-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">SZ - Astronomy 数智光电</div>
+        <div class="nav-links">
+            <div class="nav-link">产品服务</div>
+            <div class="nav-link">官方教程</div>
+            <div class="nav-link">品牌社区</div>
+            <div class="nav-link">联系我们</div>
+            <div class="nav-link">帮助中心</div>
+            <div class="nav-link">购买</div>
+            <div class="nav-link">更多</div>
+        </div>
+        <div class="contact-info">
+            <a href="tel:145141919810">电话: 1145141919810</a>
+            <a href="mailto:szas@gmail.com">邮箱: szas@gmail.com</a>
+            <a href="http://tubiao.cn">经销商: https://warthunder.com/zh</a>
+        </div>
+    </header>
+    <div class="main-content">
+        <div class="image-slider">
+            <div class="slider-images" id="sliderImages">
+                <div class="slider-image">
+                    <img src="telescope.jpg" alt="望远镜">
+                </div>
+                <div class="slider-image">
+                    <img src="guide_scope.jpg" alt="导星镜">
+                </div>
+                <div class="slider-image">
+                    <img src="equatorial_mount.jpg" alt="赤道仪">
+                </div>
+                <div class="slider-image">
+                    <img src="planetary_camera.jpg" alt="行星相机">
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button class="slider-btn" id="prevBtn">&lt;</button>
+                <button class="slider-btn" id="nextBtn">&gt;</button>
+            </div>
+        </div>
+        <div class="product-categories">
+            <div class="category-item" data-target="telescope">望远镜</div>
+            <div class="category-item" data-target="guide-scope">导星镜</div>
+            <div class="category-item" data-target="equatorial-mount">赤道仪</div>
+            <div class="category-item" data-target="planetary-camera">行星相机</div>
+            <div class="category-item" data-target="more">更多</div>
+        </div>
+    </div>
+    <div class="software-download">
+        <h2>软件/驱动下载</h2>
+        <div class="os-tabs">
+            <div class="os-tab" data-os="windows">Windows</div>
+            <div class="os-tab" data-os="macos">macOS</div>
+            <div class="os-tab" data-os="linux">Linux</div>
+        </div>
+        <div class="download-links" id="windowsLinks">
+            <div class="download-link">Windows (x86, 64-bit), Stellarium 114MB <span>下载</span></div>
+            <div class="download-link">Windows (x86, 64-bit), GenshinImpact 514MB <span>下载</span></div>
+        </div>
+        <div class="download-links" id="macosLinks">
+            <div class="download-link">macOS, Stellarium 98MB <span>下载</span></div>
+            <div class="download-link">macOS, SomeApp 320MB <span>下载</span></div>
+        </div>
+        <div class="download-links" id="linuxLinks">
+            <div class="download-link">Linux, Stellarium 105MB <span>下载</span></div>
+            <div class="download-link">Linux, AnotherApp 280MB <span>下载</span></div>
+        </div>
+    </div>
+    <div class="new-product">
+        <h2>新品 SeeStar S50 现已推出</h2>
+        <img src="seestar_s50.jpg" alt="SeeStar S50">
+        <button class="buy-btn">立即购买</button>
+    </div>
+    <script>
+        // 图片轮播相关
+        const sliderImages = document.getElementById('sliderImages');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentIndex = 0;
+        const images = sliderImages.querySelectorAll('.slider-image');
+        const totalImages = images.length;
+        function updateSlider() {
+            sliderImages.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+            updateSlider();
+        });
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % totalImages;
+            updateSlider();
+        });
+        // 产品分类切换相关
+        const categoryItems = document.querySelectorAll('.category-item');
+        categoryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const target = item.getAttribute('data-target');
+                let imageUrl = '';
+                switch (target) {
+                    case 'telescope':
+                        imageUrl = "telescope.jpg";
+                        break;
+                    case 'guide-scope':
+                        imageUrl = "guide_scope.jpg";
+                        break;
+                    case 'equatorial-mount':
+                        imageUrl = "equatorial_mount.jpg";
+                        break;
+                    case 'planetary-camera':
+                        imageUrl = "planetary_camera.jpg";
+                        break;
+                    case 'more':
+                        imageUrl = "more_products.jpg";
+                        break;
+                }
+                sliderImages.innerHTML = `<div class="slider-image"><img src="${imageUrl}" alt="${target}"></div>`;
+                currentIndex = 0;
+            });
+        });
+        // 操作系统下载标签切换相关
+        const osTabs = document.querySelectorAll('.os-tab');
+        osTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                osTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const os = tab.getAttribute('data-os');
+                const downloadLinks = document.querySelectorAll('.download-links');
+                downloadLinks.forEach(link => link.classList.remove('active'));
+                document.getElementById(`${os}Links`).classList.add('active');
+            });
+        });
+        // 默认显示 Windows 下载链接
+        document.querySelector('.os-tab[data-os="windows"]').classList.add('active');
+        document.getElementById('windowsLinks').classList.add('active');
+    </script>
+</body>
+</html>
