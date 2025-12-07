@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XX电商·运营后台·订单录入与销售看板</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .box { border: 1px solid #ddd; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .clock { font-size: 24px; font-weight: bold; color: #2c3e50; text-align: center; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; }
+        label { display: inline-block; width: 120px; margin-right: 10px; text-align: right; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+        th, td { border: 1px solid #dee2e6; padding: 10px; text-align: center; }
+        th { background-color: #f8f9fa; font-weight: 600; }
+        .form-group { margin: 15px 0; display: flex; align-items: center; }
+        button { padding: 8px 16px; background: #4299e1; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        button:hover { background: #3182ce; }
+        input, select { padding: 6px 10px; border: 1px solid #ced4da; border-radius: 4px; flex: 1; max-width: 300px; }
+        h1, h3 { color: #2c3e50; }
+        .tip-box { padding: 12px; margin: 15px 0; border-left: 5px solid; border-radius: 4px; }
+        .success-tip { background-color: #e6fffa; border-color: #38b2ac; }
+        .warning-tip { background-color: #fffbe6; border-color: #ed8936; }
+        .info-tip { background-color: #f0f8fb; border-color: #4299e1; }
+    </style>
+</head>
+<body>
+    <h1>XX电商·运营后台·订单录入与销售看板</h1>
+    <p>欢迎使用内部工具，实时查看订单与销售情况。</p>
+
+    <div class="box">
+        <h3>当前系统时间</h3>
+        <div class="clock" id="clock"></div>
+    </div>
+
+
+    <div class="tip-box info-tip">
+        <strong>店铺优惠政策：</strong>
+        <ul style="margin:8px 0 0 20px; line-height:1.6;">
+            <li>VIP 客户享受<strong>9 折优惠</strong></li>
+            <li>加急发货价格会<strong>×1.1 加价</strong></li>
+            <li>每小时前10 分钟享受 <strong>8.5 折</strong>时段优惠</li>
+            <li>前10分钟+购买≥5件，再叠加<strong>8折</strong>（相当于 8.5折×8折=6.8折）</li>
+        </ul>
+    </div>
+
+    <div id="timeDiscountTip" class="tip-box warning-tip"></div>
+
+    <div class="box">
+        <h3>新建订单</h3>
+        <form onsubmit="return validateForm()">
+            <div class="form-group">
+                <label>客户名称:</label>
+                <input type="text" id="customerName" placeholder="请输入客户名称" required>
+            </div>
+            <div class="form-group">
+                <label>商品单价(¥):</label>
+                <input type="number" id="priceInput" step="0.01" placeholder="请输入大于0的数字" min="0.01" required>
+            </div>
+            <div class="form-group">
+                <label>购买数量(件):</label>
+                <input type="number" id="qtyInput" placeholder="请输入大于0的整数" min="1" required>
+            </div>
+            <div class="form-group">
+                <label>客户类型:</label>
+                <select id="customerType" required>
+                    <option value="normal">普通客户</option>
+                    <option value="vip">VIP客户</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>加急发货:</label>
+                <input type="checkbox" id="urgentFlag" style="width: auto; max-width: none; margin-left: 10px;"> 是
+            </div>
+            <div class="form-group" style="justify-content: center; margin-top: 20px;">
+                <button type="submit">提交订单</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="box" id="orderResult"></div>
+
+    <div class="box" id="dashboard"></div>
+    <div class="box" id="orderTable"></div>
+
+    <script>
+        function padZero(n) {
+            return n < 10 ? "0" + n : n;
+        }
+
+        function updateClock() {
+            var now = new Date();
+            var y = now.getFullYear();
+            var m = now.getMonth() + 1; 
+            var d = now.getDate();
+            var hh = now.getHours();
+            var mm = now.getMinutes();
+            var ss = now.getSeconds();
+            var weekNames = ["日", "一", "二", "三", "四", "五", "六"];
+            var w = weekNames[now.getDay()];
+            var timeStr = `${y}年${padZero(m)}月${padZero(d)}日 星期${w} ${padZero(hh)}:${padZero(mm)}:${padZero(ss)}`;
+            document.getElementById("clock").innerHTML = timeStr;
+
+            updateTimeDiscountTip(mm);
+        }
+
+        function updateTimeDiscountTip(minute) {
+            var tipEl = document.getElementById("timeDiscountTip");
+            if (minute >= 0 && minute <= 9) {
+                tipEl.innerHTML = `<strong>🔥 时段优惠生效中！</strong> 当前为每小时前10分钟，可享受8.5折优惠；若购买≥5件，再叠加8折！`;
+                tipEl.className = "tip-box success-tip";
+            } else {
+                tipEl.innerHTML = `<strong>⏰ 时段优惠提示：</strong> 每个整点前10分钟可享受8.5折优惠，购买≥5件还能叠加8折，请留意下单时间~`;
+                tipEl.className = "tip-box warning-tip";
+            }
+        }
+
+        var orders = [];
+
+        function validateForm() {
+            var name = document.getElementById("customerName").value.trim();
+            var price = parseFloat(document.getElementById("priceInput").value);
+            var quantity = parseInt(document.getElementById("qtyInput").value, 10);
+            var customerType = document.getElementById("customerType").value;
+            var isUrgent = document.getElementById("urgentFlag").checked;
+
+            if (!name) {
+                alert("客户名称不能为空！");
+                return false;
+            }
+
+            if (isNaN(price) || price <= 0) {
+                alert("商品单价必须是大于0的数字！");
+                return false;
+            }
+
+            if (isNaN(quantity) || quantity <= 0) {
+                alert("购买数量必须是大于0的整数！");
+                return false;
+            }
+
+            processOrder(name, price, quantity, customerType === "vip", isUrgent);
+            return false; 
+        }
+
+        function processOrder(customerName, price, quantity, isVip, isUrgent) {
+            var baseTotal = price * quantity;
+            var finalTotal = baseTotal;
+
+            var discountLogs = [];
+
+            if (isVip) {
+                finalTotal *= 0.9;
+                discountLogs.push("VIP客户9折");
+            } else {
+                discountLogs.push("普通客户无VIP优惠");
+            }
+
+            if (isUrgent) {
+                finalTotal *= 1.1;
+                discountLogs.push("加急发货×1.1");
+            } else {
+                discountLogs.push("未加急发货");
+            }
+
+            var now = new Date();
+            var minute = now.getMinutes();
+            var hitTimeDiscount = minute >= 0 && minute <= 9;
+            if (hitTimeDiscount) {
+                finalTotal *= 0.85;
+                discountLogs.push("每小时前10分钟8.5折");
+            } else {
+                discountLogs.push("未命中时段优惠");
+            }
+
+            if (hitTimeDiscount && quantity >= 5) {
+                finalTotal *= 0.8;
+                discountLogs.push("<strong>专属：叠加8折</strong>");
+            }
+
+            var orderType = (isVip && finalTotal > 1000) ? "大额VIP订单" : "普通订单";
+
+            document.getElementById("orderResult").innerHTML = `
+                <h3>📊 订单提交成功！</h3>
+                <p>客户名称：${customerName}</p>
+                <p>商品单价：¥${price.toFixed(2)}</p>
+                <p>购买数量：${quantity}件</p>
+                <p>基础金额：¥${baseTotal.toFixed(2)}</p>
+                <p>最终金额：<span style="color: #e53e3e; font-size: 18px; font-weight: bold;">¥${finalTotal.toFixed(2)}</span></p>
+                <p>订单类型：${orderType}</p>
+                <div style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 4px;">
+                    <strong>优惠明细：</strong>${discountLogs.join(" → ")}
+                </div>
+            `;
+
+            orders.push({
+                name: customerName,
+                price: price,
+                quantity: quantity,
+                baseTotal: baseTotal,
+                finalTotal: finalTotal,
+                isVip: isVip,
+                isUrgent: isUrgent,
+                hitTimeDiscount: hitTimeDiscount,
+                orderTime: now.toLocaleString()
+            });
+
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            var orderCount = orders.length;
+            var totalSales = orders.reduce((sum, order) => sum + order.finalTotal, 0);
+            var avgOrderPrice = orderCount > 0 ? totalSales / orderCount : 0;
+
+            document.getElementById("dashboard").innerHTML = `
+                <h3>📈 销售看板</h3>
+                <p>累计订单数：${orderCount} 单</p>
+                <p>销售总额：¥${totalSales.toFixed(2)}</p>
+                <p>平均客单价：¥${avgOrderPrice.toFixed(2)}</p>
+            `;
+
+            updateOrderTable();
+        }
+
+        function updateOrderTable() {
+            if (orders.length === 0) {
+                document.getElementById("orderTable").innerHTML = "<h3>📜 历史订单记录</h3><p>暂无历史订单</p>";
+                return;
+            }
+
+            var tableHtml = `
+                <h3>📜 历史订单记录</h3>
+                <table>
+                    <tr>
+                        <th>下单时间</th>
+                        <th>客户名称</th>
+                        <th>单价(¥)</th>
+                        <th>数量(件)</th>
+                        <th>基础金额(¥)</th>
+                        <th>最终金额(¥)</th>
+                        <th>VIP</th>
+                        <th>加急</th>
+                        <th>时段优惠</th>
+                    </tr>
+            `;
+
+            orders.forEach(order => {
+                tableHtml += `
+                    <tr>
+                        <td>${order.orderTime}</td>
+                        <td>${order.name}</td>
+                        <td>${order.price.toFixed(2)}</td>
+                        <td>${order.quantity}</td>
+                        <td>${order.baseTotal.toFixed(2)}</td>
+                        <td style="color: #e53e3e; font-weight: 600;">${order.finalTotal.toFixed(2)}</td>
+                        <td>${order.isVip ? "是" : "否"}</td>
+                        <td>${order.isUrgent ? "是" : "否"}</td>
+                        <td>${order.hitTimeDiscount ? "是" : "否"}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += "</table>";
+            document.getElementById("orderTable").innerHTML = tableHtml;
+        }
+
+    
+        updateClock();
+        setInterval(updateClock, 1000);
+
+
+        updateDashboard();
+    </script>
+</body>
+</html>
